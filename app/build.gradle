@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 33
     defaultConfig {
         applicationId "example.redis.android.wf9a5m75.exampleapp"
         minSdkVersion 17
