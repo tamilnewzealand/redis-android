@@ -29,6 +29,7 @@
 
 #include "server.h"
 #include "rdb.h"
+#include <stdio.h>
 
 #include <stdarg.h>
 

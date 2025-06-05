@@ -30,9 +30,14 @@
 #include "server.h"
 #include "bio.h"
 #include "rio.h"
+#include "wait3.h"
+#include "sds.h"
 
+#include <stdio.h>
+#include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -759,7 +764,7 @@ int loadAppendOnlyFile(char *filename) {
 
         /* Serve the clients from time to time */
         if (!(loops++ % 1000)) {
-            loadingProgress(ftello(fp));
+            loadingProgress(ftell(fp));
             processEventsWhileBlocked();
         }
 
@@ -843,7 +848,7 @@ int loadAppendOnlyFile(char *filename) {
          * argv/argc of the client instead of the local variables. */
         freeFakeClientArgv(fakeClient);
         fakeClient->cmd = NULL;
-        if (server.aof_load_truncated) valid_up_to = ftello(fp);
+        if (server.aof_load_truncated) valid_up_to = ftell(fp);
     }
 
     /* This point can only be reached when EOF is reached without errors.

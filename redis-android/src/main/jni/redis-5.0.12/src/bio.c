@@ -60,6 +60,11 @@
 
 #include "server.h"
 #include "bio.h"
+#ifdef __ANDROID__
+    #include <pthread.h>
+    #include <bthread.h>
+    #include <pt-internal.h>
+#endif
 
 static pthread_t bio_threads[BIO_NUM_OPS];
 static pthread_mutex_t bio_mutex[BIO_NUM_OPS];

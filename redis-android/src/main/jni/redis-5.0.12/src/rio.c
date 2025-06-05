@@ -129,7 +129,7 @@ static size_t rioFileRead(rio *r, void *buf, size_t len) {
 
 /* Returns read/write position in file. */
 static off_t rioFileTell(rio *r) {
-    return ftello(r->io.file.fp);
+    return ftell(r->io.file.fp);
 }
 
 /* Flushes any buffer to target device if applicable. Returns 1 on success

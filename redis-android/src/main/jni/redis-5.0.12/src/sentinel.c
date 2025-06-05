@@ -31,6 +31,7 @@
 #include "server.h"
 #include "hiredis.h"
 #include "async.h"
+#include "wait3.h"
 
 #include <ctype.h>
 #include <arpa/inet.h>

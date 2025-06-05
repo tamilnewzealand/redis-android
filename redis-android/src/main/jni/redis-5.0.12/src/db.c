@@ -30,6 +30,7 @@
 #include "server.h"
 #include "cluster.h"
 #include "atomicvar.h"
+#include "redis-android.h"
 
 #include <signal.h>
 #include <ctype.h>
@@ -838,6 +839,12 @@ void typeCommand(client *c) {
     addReplyStatus(c,type);
 }
 
+#ifdef __ANDROID__
+void *androidShutdownWorker(void *p) {
+    server.el->stop = 1;
+}
+#endif
+
 void shutdownCommand(client *c) {
     int flags = 0;
 
@@ -862,7 +869,16 @@ void shutdownCommand(client *c) {
      * Also when in Sentinel mode clear the SAVE flag and force NOSAVE. */
     if (server.loading || server.sentinel_mode)
         flags = (flags & ~SHUTDOWN_SAVE) | SHUTDOWN_NOSAVE;
+#ifdef __REDIS_ANDROID__
+    if (prepareForShutdown(flags) == C_OK) {
+        c->flags |= CLIENT_CLOSE_AFTER_REPLY;
+        addReply(c,shared.ok);
+        pthread_create(&exitThread, NULL, androidShutdownWorker, NULL);
+        return;
+    }
+#else
     if (prepareForShutdown(flags) == C_OK) exit(0);
+#endif
     addReplyError(c,"Errors trying to SHUTDOWN. Check logs.");
 }
 

@@ -30,6 +30,7 @@
 
 #include "server.h"
 #include <sys/stat.h>
+#include <stdio.h>
 
 #define ERROR(...) { \
     char __buf[1024]; \
@@ -50,7 +51,7 @@ int consumeNewline(char *buf) {
 
 int readLong(FILE *fp, char prefix, long *target) {
     char buf[128], *eptr;
-    epos = ftello(fp);
+    epos = ftell(fp);
     if (fgets(buf,sizeof(buf),fp) == NULL) {
         return 0;
     }
@@ -64,7 +65,7 @@ int readLong(FILE *fp, char prefix, long *target) {
 
 int readBytes(FILE *fp, char *target, long length) {
     long real;
-    epos = ftello(fp);
+    epos = ftell(fp);
     real = fread(target,1,length,fp);
     if (real != length) {
         ERROR("Expected to read %ld bytes, got %ld bytes",length,real);
@@ -104,7 +105,7 @@ off_t process(FILE *fp) {
     char *str;
 
     while(1) {
-        if (!multi) pos = ftello(fp);
+        if (!multi) pos = ftell(fp);
         if (!readArgc(fp, &argc)) break;
 
         for (i = 0; i < argc; i++) {
