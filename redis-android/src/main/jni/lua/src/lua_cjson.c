@@ -39,14 +39,13 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 #include <limits.h>
 #include "lua.h"
 #include "lauxlib.h"
 
 #include "strbuf.h"
 #include "fpconv.h"
-
-#include "../redis-5.0.12/src/solarisfixes.h"
 
 #ifndef CJSON_MODNAME
 #define CJSON_MODNAME   "cjson"
@@ -141,13 +140,13 @@ typedef struct {
 
 typedef struct {
     json_token_type_t type;
-    int index;
+    size_t index;
     union {
         const char *string;
         double number;
         int boolean;
     } value;
-    int string_len;
+    size_t string_len;
 } json_token_t;
 
 static const char *char2escape[256] = {
@@ -473,6 +472,8 @@ static void json_append_string(lua_State *l, strbuf_t *json, int lindex)
      * This buffer is reused constantly for small strings
      * If there are any excess pages, they won't be hit anyway.
      * This gains ~5% speedup. */
+    if (len > SIZE_MAX / 6 - 3)
+        abort(); /* Overflow check */
     strbuf_ensure_empty_length(json, len * 6 + 2);
 
     strbuf_append_char_unsafe(json, '\"');
@@ -706,7 +707,7 @@ static int json_encode(lua_State *l)
     strbuf_t local_encode_buf;
     strbuf_t *encode_buf;
     char *json;
-    int len;
+    size_t len;
 
     luaL_argcheck(l, lua_gettop(l) == 1, 1, "expected 1 argument");
 

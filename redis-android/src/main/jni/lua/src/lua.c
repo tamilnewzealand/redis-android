@@ -374,11 +374,7 @@ static int pmain (lua_State *L) {
 }
 
 
-#ifdef __ANDROID__
-    int dummy_main (int argc, char **argv) {
-#else
-    int main (int argc, char **argv) {
-#endif
+int main (int argc, char **argv) {
   int status;
   struct Smain s;
   lua_State *L = lua_open();  /* create state */
@@ -391,10 +387,6 @@ static int pmain (lua_State *L) {
   status = lua_cpcall(L, &pmain, &s);
   report(L, status);
   lua_close(L);
-  #ifdef __ANDROID__
-    return EXIT_SUCCESS;
-  #else
-    return (status || s.status) ? EXIT_FAILURE : EXIT_SUCCESS;
-  #endif
+  return (status || s.status) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 

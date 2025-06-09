@@ -18,7 +18,7 @@ LOCAL_CFLAGS += -I$(SRC)
 LOCAL_SRC_FILES += \
   $(SRC)/async.c $(SRC)/dict.c \
   $(SRC)/hiredis.c $(SRC)/net.c \
-  $(SRC)/read.c $(SRC)/sds.c
+  $(SRC)/read.c $(SRC)/sds.c $(SRC)/sockcompat.c \
 
 
 # Allow to use the header files from external library.
